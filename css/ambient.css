@@ -1,0 +1,350 @@
+/* ===== Ambient Dynamic Backgrounds ===== */
+/* Shared animated background system for ExLibris pages */
+
+/* Container — always sits behind page content */
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Make body content sit above */
+main, footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== Floating Orbs (common) ===== */
+.ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(50px);
+  will-change: transform;
+}
+
+
+/* =============================================================
+   LIGHT THEME (default) — Uses deep warm browns that contrast
+   against the #EBE6DF background
+   ============================================================= */
+
+/* ===== FORM PAGE — Ink drops ===== */
+.ambient-form .ambient-orb:nth-child(1) {
+  width: 420px;
+  height: 420px;
+  background: rgba(42, 27, 17, 0.35);
+  top: -10%;
+  right: -5%;
+  animation: formOrb1 14s ease-in-out infinite alternate;
+}
+
+.ambient-form .ambient-orb:nth-child(2) {
+  width: 350px;
+  height: 350px;
+  background: rgba(42, 27, 17, 0.25);
+  bottom: 10%;
+  left: -8%;
+  animation: formOrb2 18s ease-in-out infinite alternate;
+}
+
+.ambient-form .ambient-orb:nth-child(3) {
+  width: 280px;
+  height: 280px;
+  background: rgba(42, 27, 17, 0.2);
+  top: 40%;
+  left: 50%;
+  animation: formOrb3 12s ease-in-out infinite alternate;
+}
+
+@keyframes formOrb1 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(-15vw, 12vh) scale(1.2); }
+  100% { transform: translate(-8vw, 25vh) scale(0.9); }
+}
+
+@keyframes formOrb2 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(20vw, -10vh) scale(1.3); }
+  100% { transform: translate(12vw, -20vh) scale(1.1); }
+}
+
+@keyframes formOrb3 {
+  0%   { transform: translate(-50%, -50%) scale(0.8); opacity: 0.4; }
+  50%  { transform: translate(-30%, -40%) scale(1.1); opacity: 0.8; }
+  100% { transform: translate(-60%, -50%) scale(0.9); opacity: 0.5; }
+}
+
+/* Floating streaks */
+.ambient-form .ambient-streak {
+  position: absolute;
+  width: 2px;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, rgba(42,27,17,0.35), transparent);
+  border-radius: 2px;
+  animation: streakFloat 8s ease-in-out infinite;
+}
+
+.ambient-form .ambient-streak:nth-child(4) { left: 15%; top: 20%; animation-delay: 0s; animation-duration: 9s; }
+.ambient-form .ambient-streak:nth-child(5) { left: 70%; top: 50%; animation-delay: 2s; animation-duration: 11s; height: 60px; }
+.ambient-form .ambient-streak:nth-child(6) { left: 40%; top: 70%; animation-delay: 4s; animation-duration: 7s; height: 100px; }
+
+@keyframes streakFloat {
+  0%, 100% { transform: translateY(0) rotate(5deg); opacity: 0; }
+  30%      { opacity: 0.7; }
+  50%      { transform: translateY(-60px) rotate(-3deg); opacity: 1; }
+  70%      { opacity: 0.7; }
+}
+
+
+/* ===== ABOUT PAGE — Constellation ===== */
+.ambient-about .ambient-orb:nth-child(1) {
+  width: 500px;
+  height: 500px;
+  background: rgba(42, 27, 17, 0.3);
+  top: -15%;
+  left: 60%;
+  animation: aboutOrb1 20s ease-in-out infinite alternate;
+}
+
+.ambient-about .ambient-orb:nth-child(2) {
+  width: 380px;
+  height: 380px;
+  background: rgba(42, 27, 17, 0.22);
+  bottom: -10%;
+  left: -10%;
+  animation: aboutOrb2 16s ease-in-out infinite alternate;
+}
+
+.ambient-about .ambient-orb:nth-child(3) {
+  width: 250px;
+  height: 250px;
+  background: rgba(42, 27, 17, 0.25);
+  top: 55%;
+  right: 10%;
+  animation: aboutOrb3 14s ease-in-out infinite alternate;
+}
+
+@keyframes aboutOrb1 {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-20vw, 15vh) scale(1.15); }
+}
+
+@keyframes aboutOrb2 {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(15vw, -10vh) scale(1.2); }
+}
+
+@keyframes aboutOrb3 {
+  0%   { transform: translate(0, 0) scale(0.9); opacity: 0.5; }
+  50%  { transform: translate(-10vw, -8vh) scale(1.15); opacity: 1; }
+  100% { transform: translate(5vw, -15vh) scale(1); opacity: 0.7; }
+}
+
+/* Pulsing dots */
+.ambient-about .ambient-dot {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(42, 27, 17, 0.55);
+  animation: dotPulse 4s ease-in-out infinite;
+}
+
+.ambient-about .ambient-dot:nth-child(4)  { top: 12%; left: 20%; animation-delay: 0s; }
+.ambient-about .ambient-dot:nth-child(5)  { top: 25%; left: 75%; animation-delay: 1s; }
+.ambient-about .ambient-dot:nth-child(6)  { top: 45%; left: 10%; animation-delay: 2s; }
+.ambient-about .ambient-dot:nth-child(7)  { top: 60%; left: 85%; animation-delay: 0.5s; }
+.ambient-about .ambient-dot:nth-child(8)  { top: 78%; left: 35%; animation-delay: 1.5s; }
+.ambient-about .ambient-dot:nth-child(9)  { top: 88%; left: 60%; animation-delay: 2.5s; }
+.ambient-about .ambient-dot:nth-child(10) { top: 35%; left: 50%; animation-delay: 3s; }
+.ambient-about .ambient-dot:nth-child(11) { top: 8%;  left: 55%; animation-delay: 0.8s; }
+.ambient-about .ambient-dot:nth-child(12) { top: 70%; left: 15%; animation-delay: 1.8s; }
+
+@keyframes dotPulse {
+  0%, 100% { transform: scale(1); opacity: 0.35; }
+  50%      { transform: scale(3.5); opacity: 1; }
+}
+
+
+/* ===== STATS PAGE — Data pulse ===== */
+.ambient-stats .ambient-orb:nth-child(1) {
+  width: 450px;
+  height: 450px;
+  background: rgba(42, 27, 17, 0.3);
+  top: -5%;
+  left: -10%;
+  animation: statsOrb1 16s ease-in-out infinite alternate;
+}
+
+.ambient-stats .ambient-orb:nth-child(2) {
+  width: 380px;
+  height: 380px;
+  background: rgba(42, 27, 17, 0.22);
+  bottom: -5%;
+  right: -5%;
+  animation: statsOrb2 20s ease-in-out infinite alternate;
+}
+
+.ambient-stats .ambient-orb:nth-child(3) {
+  width: 300px;
+  height: 300px;
+  background: rgba(42, 27, 17, 0.18);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: statsOrb3 12s ease-in-out infinite alternate;
+}
+
+@keyframes statsOrb1 {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(18vw, 10vh) scale(1.2); }
+}
+
+@keyframes statsOrb2 {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-15vw, -12vh) scale(1.15); }
+}
+
+@keyframes statsOrb3 {
+  0%   { transform: translate(-50%, -50%) scale(0.8); opacity: 0.3; }
+  50%  { transform: translate(-40%, -55%) scale(1.2); opacity: 0.7; }
+  100% { transform: translate(-55%, -45%) scale(1); opacity: 0.5; }
+}
+
+/* Rising data bars */
+.ambient-stats .ambient-bar {
+  position: absolute;
+  bottom: 0;
+  width: 4px;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(to top, rgba(42,27,17,0.35), rgba(42,27,17,0.08));
+  animation: barRise 6s ease-in-out infinite;
+}
+
+.ambient-stats .ambient-bar:nth-child(4) { left: 8%;  height: 120px; animation-delay: 0s; }
+.ambient-stats .ambient-bar:nth-child(5) { left: 18%; height: 80px;  animation-delay: 1s; }
+.ambient-stats .ambient-bar:nth-child(6) { left: 28%; height: 160px; animation-delay: 2s; }
+.ambient-stats .ambient-bar:nth-child(7) { left: 42%; height: 100px; animation-delay: 0.5s; }
+.ambient-stats .ambient-bar:nth-child(8) { left: 55%; height: 140px; animation-delay: 1.5s; }
+.ambient-stats .ambient-bar:nth-child(9) { left: 68%; height: 90px;  animation-delay: 2.5s; }
+.ambient-stats .ambient-bar:nth-child(10){ left: 80%; height: 130px; animation-delay: 0.8s; }
+.ambient-stats .ambient-bar:nth-child(11){ left: 92%; height: 110px; animation-delay: 1.8s; }
+
+@keyframes barRise {
+  0%, 100% { transform: scaleY(0.3); opacity: 0; }
+  30%      { opacity: 0.6; }
+  50%      { transform: scaleY(1); opacity: 0.8; }
+  70%      { opacity: 0.6; }
+}
+
+
+/* ===== INDEX PAGE — Floating book pages / reading aura ===== */
+.ambient-index .ambient-orb:nth-child(1) {
+  width: 500px;
+  height: 500px;
+  background: rgba(42, 27, 17, 0.28);
+  top: 20%;
+  right: -10%;
+  animation: indexOrb1 18s ease-in-out infinite alternate;
+}
+
+.ambient-index .ambient-orb:nth-child(2) {
+  width: 400px;
+  height: 400px;
+  background: rgba(42, 27, 17, 0.2);
+  bottom: 15%;
+  left: -8%;
+  animation: indexOrb2 22s ease-in-out infinite alternate;
+}
+
+.ambient-index .ambient-orb:nth-child(3) {
+  width: 320px;
+  height: 320px;
+  background: rgba(42, 27, 17, 0.16);
+  top: 60%;
+  left: 45%;
+  animation: indexOrb3 15s ease-in-out infinite alternate;
+}
+
+@keyframes indexOrb1 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(-12vw, -8vh) scale(1.15); }
+  100% { transform: translate(-20vw, 5vh) scale(0.95); }
+}
+
+@keyframes indexOrb2 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(15vw, 8vh) scale(1.2); }
+  100% { transform: translate(8vw, -5vh) scale(1.05); }
+}
+
+@keyframes indexOrb3 {
+  0%   { transform: translate(-50%, -50%) scale(0.8); opacity: 0.3; }
+  50%  { transform: translate(-35%, -45%) scale(1.1); opacity: 0.8; }
+  100% { transform: translate(-55%, -55%) scale(0.9); opacity: 0.5; }
+}
+
+/* Floating page fragments — tiny rectangles drifting up like book pages */
+.ambient-index .ambient-page {
+  position: absolute;
+  width: 16px;
+  height: 22px;
+  border: 1.5px solid rgba(42, 27, 17, 0.2);
+  border-radius: 2px;
+  background: rgba(42, 27, 17, 0.06);
+  animation: pageFloat linear infinite;
+  transform-origin: center;
+}
+
+.ambient-index .ambient-page:nth-child(4) { left: 10%; bottom: -5%; animation-duration: 18s; animation-delay: 0s; width: 14px; height: 20px; }
+.ambient-index .ambient-page:nth-child(5) { left: 25%; bottom: -5%; animation-duration: 22s; animation-delay: 3s; width: 18px; height: 24px; }
+.ambient-index .ambient-page:nth-child(6) { left: 45%; bottom: -5%; animation-duration: 16s; animation-delay: 1s; width: 12px; height: 17px; }
+.ambient-index .ambient-page:nth-child(7) { left: 65%; bottom: -5%; animation-duration: 20s; animation-delay: 5s; width: 16px; height: 22px; }
+.ambient-index .ambient-page:nth-child(8) { left: 80%; bottom: -5%; animation-duration: 24s; animation-delay: 2s; width: 14px; height: 19px; }
+.ambient-index .ambient-page:nth-child(9) { left: 55%; bottom: -5%; animation-duration: 19s; animation-delay: 7s; width: 15px; height: 21px; }
+.ambient-index .ambient-page:nth-child(10){ left: 35%; bottom: -5%; animation-duration: 21s; animation-delay: 4s; width: 13px; height: 18px; }
+
+@keyframes pageFloat {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+  5%   { opacity: 0.5; }
+  50%  { transform: translateY(-50vh) rotate(25deg); opacity: 0.4; }
+  95%  { opacity: 0; }
+  100% { transform: translateY(-110vh) rotate(45deg); opacity: 0; }
+}
+
+
+/* =============================================================
+   DARK THEME — Warmer golden tones against the dark background
+   ============================================================= */
+body.dark-theme .ambient-orb {
+  opacity: 0.8;
+}
+
+/* Form */
+body.dark-theme .ambient-form .ambient-orb:nth-child(1) { background: rgba(212, 168, 118, 0.14); }
+body.dark-theme .ambient-form .ambient-orb:nth-child(2) { background: rgba(196, 169, 141, 0.1); }
+body.dark-theme .ambient-form .ambient-orb:nth-child(3) { background: rgba(168, 137, 100, 0.08); }
+body.dark-theme .ambient-form .ambient-streak { background: linear-gradient(to bottom, transparent, rgba(212,168,118,0.12), transparent); }
+
+/* About */
+body.dark-theme .ambient-about .ambient-orb:nth-child(1) { background: rgba(212, 168, 118, 0.12); }
+body.dark-theme .ambient-about .ambient-orb:nth-child(2) { background: rgba(196, 169, 141, 0.08); }
+body.dark-theme .ambient-about .ambient-orb:nth-child(3) { background: rgba(168, 137, 100, 0.1); }
+body.dark-theme .ambient-about .ambient-dot { background: rgba(212, 168, 118, 0.25); }
+
+/* Stats */
+body.dark-theme .ambient-stats .ambient-orb:nth-child(1) { background: rgba(212, 168, 118, 0.12); }
+body.dark-theme .ambient-stats .ambient-orb:nth-child(2) { background: rgba(196, 169, 141, 0.08); }
+body.dark-theme .ambient-stats .ambient-orb:nth-child(3) { background: rgba(168, 137, 100, 0.08); }
+body.dark-theme .ambient-stats .ambient-bar { background: linear-gradient(to top, rgba(212,168,118,0.12), rgba(212,168,118,0.03)); }
+
+/* Index */
+body.dark-theme .ambient-index .ambient-orb:nth-child(1) { background: rgba(212, 168, 118, 0.12); }
+body.dark-theme .ambient-index .ambient-orb:nth-child(2) { background: rgba(196, 169, 141, 0.08); }
+body.dark-theme .ambient-index .ambient-orb:nth-child(3) { background: rgba(168, 137, 100, 0.08); }
+body.dark-theme .ambient-index .ambient-page {
+  border-color: rgba(212, 168, 118, 0.08);
+  background: rgba(212, 168, 118, 0.03);
+}

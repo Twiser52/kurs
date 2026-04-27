@@ -1,0 +1,350 @@
+/* ===== Page Flip Transition — Realistic Book Page ===== */
+
+.page-flip-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  pointer-events: none;
+  perspective: 2200px;
+  overflow: hidden;
+}
+
+/* Shadow darkens the screen as page lifts */
+.page-flip-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.3s ease;
+}
+
+/* ===== The "book page" itself ===== */
+.page-flip-page {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 55%;
+  height: 100%;
+  transform-origin: left center;
+  transform: rotateY(0deg);
+  backface-visibility: hidden;
+  opacity: 0;
+  transition: none;
+
+  /* Realistic old paper background */
+  background:
+    /* Subtle noise texture */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"),
+    linear-gradient(
+      170deg,
+      #f7f0e6 0%,
+      #faf5ec 8%,
+      #fdf9f2 25%,
+      #faf5ec 50%,
+      #f5efe4 75%,
+      #efe7db 100%
+    );
+}
+
+/* ===== Paper texture lines (ruled lines like a book) ===== */
+.page-flip-page::before {
+  content: '';
+  position: absolute;
+  top: 80px;
+  left: 60px;
+  right: 40px;
+  bottom: 80px;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 26px,
+      rgba(140,106,70,0.15) 26px,
+      rgba(140,106,70,0.15) 27px
+    );
+  pointer-events: none;
+}
+
+/* ===== Spine shadow (left edge of the page) ===== */
+.page-flip-page::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50px;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(0,0,0,0.18) 0%,
+    rgba(0,0,0,0.06) 30%,
+    rgba(0,0,0,0.02) 60%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+/* ===== Faux text content (generated via JS, styled here) ===== */
+.page-flip-content {
+  position: absolute;
+  top: 90px;
+  left: 70px;
+  right: 50px;
+  bottom: 90px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.page-flip-text-line {
+  height: 27px;
+  display: flex;
+  align-items: center;
+  font-family: 'Newsreader', 'Georgia', serif;
+  font-size: 0.82rem;
+  line-height: 27px;
+  color: rgba(50, 30, 15, 0.38);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Vary line widths for realism */
+.page-flip-text-line:nth-child(3n)   { width: 92%; }
+.page-flip-text-line:nth-child(5n)   { width: 78%; }
+.page-flip-text-line:nth-child(7n)   { width: 85%; }
+.page-flip-text-line:nth-child(11n)  { width: 60%; } /* paragraph end */
+.page-flip-text-line:nth-child(11n+1){ padding-left: 30px; } /* paragraph indent */
+
+/* ===== Page number at bottom ===== */
+.page-flip-page-number {
+  position: absolute;
+  bottom: 35px;
+  right: 50px;
+  font-family: 'Newsreader', 'Georgia', serif;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: rgba(90, 60, 30, 0.45);
+  user-select: none;
+}
+
+/* ===== Decorative header ornament ===== */
+.page-flip-ornament {
+  position: absolute;
+  top: 40px;
+  left: 70px;
+  right: 50px;
+  text-align: center;
+  font-family: 'Newsreader', 'Georgia', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.5em;
+  color: rgba(120, 85, 50, 0.4);
+  user-select: none;
+}
+
+/* ===== Page curl (bottom-right corner) ===== */
+.page-flip-curl {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(
+    315deg,
+    #e8dfd3 0%,
+    #f0e9de 40%,
+    transparent 40.5%
+  );
+  box-shadow: -3px -3px 8px rgba(0,0,0,0.06);
+  border-radius: 0 0 0 0;
+}
+
+/* ===== Back of the page (visible during flip) ===== */
+.page-flip-back {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 55%;
+  height: 100%;
+  transform-origin: left center;
+  transform: rotateY(180deg);
+  backface-visibility: hidden;
+  opacity: 0;
+  background: linear-gradient(
+    270deg,
+    #e8e0d4 0%,
+    #ede6db 20%,
+    #f0e9de 50%,
+    #ede6db 80%,
+    #e5ddd0 100%
+  );
+}
+
+/* Back of page — faint mirrored lines */
+.page-flip-back::before {
+  content: '';
+  position: absolute;
+  top: 80px;
+  left: 40px;
+  right: 60px;
+  bottom: 80px;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 26px,
+      rgba(140,106,70,0.04) 26px,
+      rgba(140,106,70,0.04) 27px
+    );
+}
+
+/* ===== Animations — ACTIVE state ===== */
+.page-flip-overlay.flipping {
+  pointer-events: all;
+}
+
+.page-flip-overlay.flipping .page-flip-page {
+  opacity: 1;
+  animation: pageFlipOut 0.75s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+  box-shadow:
+    -10px 0 40px rgba(0, 0, 0, 0.15),
+    -4px 0 15px rgba(0, 0, 0, 0.08),
+    inset 8px 0 20px rgba(0, 0, 0, 0.03);
+}
+
+.page-flip-overlay.flipping .page-flip-back {
+  opacity: 1;
+  animation: pageFlipOut 0.75s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+}
+
+.page-flip-overlay.flipping .page-flip-shadow {
+  animation: pageShadow 0.75s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+}
+
+@keyframes pageFlipOut {
+  0%   { transform: rotateY(0deg); }
+  100% { transform: rotateY(-180deg); }
+}
+
+@keyframes pageShadow {
+  0%   { background: rgba(0, 0, 0, 0); }
+  40%  { background: rgba(0, 0, 0, 0.12); }
+  100% { background: rgba(0, 0, 0, 0.28); }
+}
+
+/* ===== Entering page (reveal from left) ===== */
+.page-flip-overlay.entering .page-flip-page {
+  opacity: 1;
+  right: auto;
+  left: 0;
+  transform-origin: right center;
+  animation: pageFlipIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  box-shadow:
+    10px 0 40px rgba(0, 0, 0, 0.12),
+    4px 0 15px rgba(0, 0, 0, 0.06),
+    inset -8px 0 20px rgba(0, 0, 0, 0.02);
+}
+
+.page-flip-overlay.entering .page-flip-shadow {
+  animation: pageShadowIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Mirror the curl on entry */
+.page-flip-overlay.entering .page-flip-curl {
+  right: auto;
+  left: 0;
+  transform: scaleX(-1);
+}
+
+@keyframes pageFlipIn {
+  0%   { transform: rotateY(90deg); }
+  100% { transform: rotateY(0deg); }
+}
+
+@keyframes pageShadowIn {
+  0%   { background: rgba(0, 0, 0, 0.18); }
+  100% { background: rgba(0, 0, 0, 0); }
+}
+
+/* ===== Dark theme — aged parchment look ===== */
+body.dark-theme .page-flip-page {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"),
+    linear-gradient(
+      170deg,
+      #2e2822 0%,
+      #342e27 8%,
+      #3a332c 25%,
+      #342e27 50%,
+      #2e2822 75%,
+      #282219 100%
+    );
+}
+
+body.dark-theme .page-flip-page::before {
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 26px,
+      rgba(212,168,118,0.1) 26px,
+      rgba(212,168,118,0.1) 27px
+    );
+}
+
+body.dark-theme .page-flip-page::after {
+  background: linear-gradient(
+    90deg,
+    rgba(0,0,0,0.3) 0%,
+    rgba(0,0,0,0.1) 30%,
+    rgba(0,0,0,0.03) 60%,
+    transparent 100%
+  );
+}
+
+body.dark-theme .page-flip-text-line {
+  color: rgba(212, 168, 118, 0.3);
+}
+
+body.dark-theme .page-flip-page-number {
+  color: rgba(212, 168, 118, 0.4);
+}
+
+body.dark-theme .page-flip-ornament {
+  color: rgba(212, 168, 118, 0.35);
+}
+
+body.dark-theme .page-flip-curl {
+  background: linear-gradient(
+    315deg,
+    #252019 0%,
+    #2e2822 40%,
+    transparent 40.5%
+  );
+  box-shadow: -3px -3px 8px rgba(0,0,0,0.12);
+}
+
+body.dark-theme .page-flip-back {
+  background: linear-gradient(
+    270deg,
+    #252019 0%,
+    #2a231c 20%,
+    #2e2822 50%,
+    #2a231c 80%,
+    #221c15 100%
+  );
+}
+
+body.dark-theme .page-flip-back::before {
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 26px,
+      rgba(212,168,118,0.025) 26px,
+      rgba(212,168,118,0.025) 27px
+    );
+}

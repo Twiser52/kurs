@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ExLibris — Моя библиотека</title>
+  <meta name="description" content="ExLibris — персональная библиотека книг с умным поиском, статистикой и стильным дизайном.">
+  <link rel="stylesheet" href="css/style.css?v=6">
+  <link rel="stylesheet" href="css/page-transition.css">
+  <link rel="stylesheet" href="css/ambient.css">
+</head>
+<body class="index-page">
+
+  <!-- Ambient Background -->
+  <div class="ambient-bg ambient-index">
+    <div class="ambient-orb"></div>
+    <div class="ambient-orb"></div>
+    <div class="ambient-orb"></div>
+    <div class="ambient-page"></div>
+    <div class="ambient-page"></div>
+    <div class="ambient-page"></div>
+    <div class="ambient-page"></div>
+    <div class="ambient-page"></div>
+    <div class="ambient-page"></div>
+    <div class="ambient-page"></div>
+  </div>
+  <!-- HERO вместо хедера -->
+  <div class="index-hero">
+    <div class="index-hero-inner">
+      <div class="index-hero-brand">
+        <span class="index-hero-label"><img src="https://cdn-icons-png.flaticon.com/128/3330/3330300.png" alt="ExLibris"></span>
+        <h1 class="index-hero-title">ExLibris</h1>
+      </div>
+      <p class="index-hero-quote">
+        «Читатель живёт тысячью жизней прежде, чем умрёт.<br>
+        Тот, кто никогда не читает, — живёт лишь однажды.»
+      </p>
+      <p class="index-hero-author">— Джордж Р.Р. Мартин</p>
+    </div>
+  </div>
+
+  <main class="container index-main">
+    <div class="filters-container">
+      <div class="filter-group" style="flex: 1; min-width: 200px;">
+        <label for="searchBook">Поиск:</label>
+        <input type="text" id="searchBook" placeholder="Название или автор..." oninput="applyFilters()" style="width: 100%;">
+      </div>
+      <div class="filter-group">
+        <label for="filterStatus">Статус:</label>
+        <select id="filterStatus" onchange="applyFilters()">
+          <option value="all">Все</option>
+          <option value="read">Прочитанные</option>
+          <option value="unread">Не прочитанные</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="filterGenre">Жанр:</label>
+        <select id="filterGenre" onchange="applyFilters()">
+          <option value="all">Все жанры</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="sortBooks">Сортировка:</label>
+        <select id="sortBooks" onchange="applyFilters()">
+          <option value="newest">Сначала новые</option>
+          <option value="az">По алфавиту (А-Я)</option>
+          <option value="za">По алфавиту (Я-А)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="book-list" id="bookList"></div>
+    <div class="pagination" id="pagination"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-quote-bar">
+        <p class="footer-quote-text">Книга — это зеркало; если в неё смотрит обезьяна, то из неё не может смотреть апостол.</p>
+        <p class="footer-quote-author">— Георг Кристоф Лихтенберг</p>
+      </div>
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="footer-logo">ExLibris</a>
+          <p>Персональная библиотека для тех, кто живёт книгами.</p>
+        </div>
+        <div class="footer-nav-col">
+          <div class="footer-col-title">Навигация</div>
+          <div class="footer-links">
+            <a href="index.html">Главная</a>
+            <a href="form.html">Добавить книгу</a>
+            <a href="stats.html">Статистика</a>
+            <a href="about.html">О проекте</a>
+          </div>
+        </div>
+        <div class="footer-contacts-col">
+          <div class="footer-col-title">Контакты</div>
+          <div class="footer-contacts">
+            <a href="https://github.com/Twiser52" target="_blank"><span class="fc-icon"><img src="https://cdn-icons-png.flaticon.com/128/2111/2111425.png" alt="GitHub"></span>GitHub: @Twiser52</a>
+            <a href="mailto:stas06112008@gmail.com"><span class="fc-icon"><img src="https://cdn-icons-png.flaticon.com/128/542/542689.png" alt="Email"></span>stas06112008@gmail.com</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 ExLibris. Все права защищены.</span>
+        <span class="footer-bottom-badge"><img src="https://cdn-icons-png.flaticon.com/128/3330/3330300.png" alt="Books"> Сделано с любовью к книгам</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- FAB NAVIGATOR -->
+  <div class="fab-nav" id="fabNav">
+    <div class="fab-nav-items">
+      <button id="themeToggle" class="fab-theme-btn" data-label="Тема"><img src="https://cdn-icons-png.flaticon.com/128/2222/2222384.png" alt="Тема"></button>
+      <div class="fab-separator"></div>
+      <a href="about.html" class="fab-nav-link" data-label="О проекте"><img src="https://cdn-icons-png.flaticon.com/128/3330/3330300.png" alt="О проекте"></a>
+      <a href="stats.html" class="fab-nav-link" data-label="Статистика"><img src="https://cdn-icons-png.flaticon.com/128/2881/2881263.png" alt="Статистика"></a>
+      <a href="form.html"  class="fab-nav-link" data-label="Добавить"><img src="https://cdn-icons-png.flaticon.com/128/992/992651.png" alt="Добавить"></a>
+      <a href="index.html" class="fab-nav-link active-page" data-label="Главная"><img src="https://cdn-icons-png.flaticon.com/128/7133/7133312.png" alt="Главная"></a>
+    </div>
+    <button class="fab-trigger" aria-label="Навигация" aria-expanded="false"><img src="https://cdn-icons-png.flaticon.com/128/2702/2702134.png" alt="Меню"></button>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="bookModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <div class="modal-left">
+        <img id="modalImg" class="modal-image" src="" alt="Cover">
+      </div>
+      <div class="modal-right">
+        <div id="modalView">
+          <h2 id="modalTitle">Название</h2>
+          <p><strong>Автор:</strong> <span id="modalAuthor">Автор</span></p>
+          <p><strong>Жанр:</strong> <span id="modalGenre">Жанр</span></p>
+          <p><strong>Статус:</strong> <span id="modalStatus">Не прочитано</span></p>
+          <p id="modalPagesContainer" style="display:none;"><strong>Прогресс:</strong> <span id="modalPages">0 / 0 стр.</span></p>
+          <p id="modalReadingTimeContainer" style="display:none;"><strong>Время чтения:</strong> <span id="modalReadingTime">0 мин</span></p>
+          <div id="modalNotesContainer" style="display:none;margin-top:15px;padding-top:15px;border-top:1px solid var(--glass-border);">
+            <h3 style="font-size:1.05rem;color:var(--neutral);margin-bottom:8px;">Заметки / Отзыв</h3>
+            <p id="modalNotes" style="font-size:0.95rem;line-height:1.6;white-space:pre-wrap;font-style:italic;color:var(--text-muted);"></p>
+          </div>
+          <div class="modal-actions grid-actions">
+            <a id="modalReadLink" href="#" class="btn btn-primary" style="display:none;">Читать онлайн</a>
+            <button class="btn btn-secondary" onclick="toggleStatusModal()">Изменить статус</button>
+            <button class="btn btn-primary" onclick="openEditMode()">Редактировать</button>
+            <button class="btn btn-danger" onclick="deleteFromModal()">Удалить</button>
+          </div>
+        </div>
+        <div id="modalEdit" style="display:none;">
+          <h2>Редактирование</h2>
+          <div class="edit-form-group"><label>Название</label><input type="text" id="editTitle"></div>
+          <div class="edit-form-group"><label>Автор</label><input type="text" id="editAuthor"></div>
+          <div class="edit-form-group"><label>Жанр</label><input type="text" id="editGenre"></div>
+          <div class="edit-form-group"><label>URL Обложки</label><input type="url" id="editImage"></div>
+          <div class="edit-form-group"><label>Ссылка для чтения</label><input type="url" id="editReadLink"></div>
+          <div class="edit-form-group flex-group">
+            <div><label>Всего страниц</label><input type="number" id="editTotalPages" min="0"></div>
+            <div><label>Прочитано</label><input type="number" id="editReadPages" min="0"></div>
+          </div>
+          <div class="edit-form-group" id="editReadingTimeGroup" style="display:none;">
+            <label>Время чтения</label>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span id="editReadingTimeDisplay" style="font-size:1.05rem;color:var(--neutral);font-weight:500;">0 мин</span>
+              <button type="button" class="btn btn-secondary" style="padding:6px 14px;font-size:0.8rem;" onclick="resetReadingTime()">Сбросить</button>
+            </div>
+          </div>
+          <div class="edit-form-group">
+            <label>Заметки / Отзыв</label>
+            <textarea id="editNotes" rows="3" style="width:100%;padding:12px;border-radius:8px;border:1px solid var(--border-color);background:var(--tertiary);color:var(--neutral);font-family:inherit;resize:vertical;"></textarea>
+          </div>
+          <div class="modal-actions grid-actions">
+            <button class="btn btn-secondary" onclick="closeEditMode()">Отмена</button>
+            <button class="btn btn-primary" onclick="saveEdit()">Сохранить</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/page-transition.js"></script>
+</body>
+</html>

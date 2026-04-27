@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Чтение | ExLibris</title>
+  <link rel="stylesheet" href="css/style.css?v=6">
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .reader-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 24px;
+      background: var(--glass-bg);
+      border-bottom: 1px solid var(--glass-border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      min-height: 56px;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .reader-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .reader-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-main);
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: background 0.2s, color 0.2s;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      background: transparent;
+      font-family: var(--font-family);
+    }
+
+    .reader-back:hover {
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--primary);
+    }
+
+    .reader-back-arrow {
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+
+    .reader-book-title {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--neutral);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 350px;
+    }
+
+    /* Card timer (under hourglass) */
+    .card-timer-block {
+      margin: 16px 0 6px;
+      text-align: center;
+    }
+
+    .reader-timer {
+      font-family: 'Inter', monospace;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.06em;
+    }
+
+    body.dark-theme .reader-timer {
+      color: var(--secondary);
+    }
+
+    .reader-timer-status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .timer-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4CAF50;
+      animation: timerPulse 1.5s ease-in-out infinite;
+    }
+
+    .timer-dot.paused {
+      background: #FF9800;
+      animation: none;
+    }
+
+    @keyframes timerPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .reader-total-time {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Estimation block */
+    .estimation-block {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px dashed var(--glass-border);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .estimation-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+
+    .estimation-label {
+      color: var(--text-muted);
+    }
+
+    .estimation-value {
+      font-weight: 700;
+      color: var(--secondary);
+      font-size: 1.1rem;
+    }
+
+    /* Speed control */
+    .speed-control {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .speed-slider-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .speed-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--border-color);
+      outline: none;
+      transition: background 0.2s;
+    }
+
+    .speed-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--secondary);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .speed-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+      box-shadow: 0 3px 12px rgba(0,0,0,0.25);
+    }
+
+    .speed-slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--secondary);
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .speed-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--tertiary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 4px 8px;
+      min-width: 90px;
+      transition: border-color 0.2s;
+    }
+
+    .speed-input-wrap:focus-within {
+      border-color: var(--secondary);
+    }
+
+    .speed-input {
+      width: 40px;
+      border: none;
+      background: transparent;
+      color: var(--neutral);
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-align: center;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .speed-input::-webkit-inner-spin-button,
+    .speed-input::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .speed-unit {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .speed-hint {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      opacity: 0.6;
+      text-align: center;
+    }
+
+    .reader-frame-container {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .reader-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .reader-frame-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-color);
+      gap: 20px;
+      z-index: 10;
+      transition: opacity 0.4s ease;
+    }
+
+    .reader-frame-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .reader-loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border-color);
+      border-top: 3px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .reader-loading-text {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      color: var(--text-muted);
+    }
+
+    /* ===== External notice — full redesign ===== */
+    .reader-external-notice {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 15;
+      padding: 40px;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .reader-external-notice.visible {
+      display: flex;
+    }
+
+    /* Ambient background — animated moving gradients */
+    .reader-ambient-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      background: var(--bg-color);
+    }
+
+    .reader-ambient-bg::before,
+    .reader-ambient-bg::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+    }
+
+    .reader-ambient-bg::before {
+      width: 500px;
+      height: 500px;
+      background: rgba(140,106,70,0.18);
+      top: -100px;
+      left: -100px;
+      animation: ambientMove1 8s ease-in-out infinite alternate;
+    }
+
+    .reader-ambient-bg::after {
+      width: 400px;
+      height: 400px;
+      background: rgba(196,169,141,0.15);
+      bottom: -80px;
+      right: -80px;
+      animation: ambientMove2 10s ease-in-out infinite alternate;
+    }
+
+    body.dark-theme .reader-ambient-bg::before {
+      background: rgba(212,168,118,0.1);
+    }
+
+    body.dark-theme .reader-ambient-bg::after {
+      background: rgba(140,106,70,0.08);
+    }
+
+    @keyframes ambientMove1 {
+      0%   { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(30vw, 20vh) scale(1.3); }
+    }
+
+    @keyframes ambientMove2 {
+      0%   { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-25vw, -15vh) scale(1.2); }
+    }
+
+    /* Third ambient blob */
+    .reader-ambient-blob {
+      position: absolute;
+      width: 350px;
+      height: 350px;
+      background: rgba(140,106,70,0.12);
+      border-radius: 50%;
+      filter: blur(70px);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: ambientMove3 12s ease-in-out infinite alternate;
+      z-index: 0;
+    }
+
+    body.dark-theme .reader-ambient-blob {
+      background: rgba(212,168,118,0.06);
+    }
+
+    @keyframes ambientMove3 {
+      0%   { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+      50%  { transform: translate(-30%, -40%) scale(1.2); opacity: 1; }
+      100% { transform: translate(-60%, -55%) scale(0.9); opacity: 0.6; }
+    }
+
+    /* Floating particles — larger, faster, brighter */
+    .reader-particles {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      background: var(--secondary);
+      border-radius: 50%;
+      opacity: 0;
+      animation: floatParticle linear infinite;
+    }
+
+    @keyframes floatParticle {
+      0%   { opacity: 0; transform: translateY(0) scale(0.6); }
+      10%  { opacity: 0.55; }
+      90%  { opacity: 0.55; }
+      100% { opacity: 0; transform: translateY(-100vh) scale(1.2); }
+    }
+
+    /* Content card */
+    .reader-notice-card {
+      position: relative;
+      z-index: 2;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 50px 60px;
+      max-width: 560px;
+      width: 100%;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+      animation: cardAppear 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    body.dark-theme .reader-notice-card {
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    @keyframes cardAppear {
+      from { opacity: 0; transform: translateY(30px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Hourglass SVG animation */
+    .hourglass-container {
+      width: 80px;
+      height: 100px;
+      margin: 0 auto 24px;
+      animation: hourglassFlip 4s ease-in-out infinite;
+      transform-origin: center center;
+    }
+
+    @keyframes hourglassFlip {
+      0%   { transform: rotate(0deg); }
+      45%  { transform: rotate(0deg); }
+      55%  { transform: rotate(180deg); }
+      100% { transform: rotate(180deg); }
+    }
+
+    .hourglass-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .hourglass-glass {
+      fill: none;
+      stroke: var(--secondary);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .hourglass-frame {
+      fill: var(--primary);
+      opacity: 0.9;
+    }
+
+    body.dark-theme .hourglass-frame {
+      fill: var(--secondary);
+    }
+
+    .hourglass-sand-top {
+      fill: var(--secondary);
+      animation: sandDrain 4s ease-in-out infinite;
+      transform-origin: center 45%;
+    }
+
+    .hourglass-sand-bottom {
+      fill: var(--secondary);
+      opacity: 0.7;
+      animation: sandFill 4s ease-in-out infinite;
+      transform-origin: center 75%;
+    }
+
+    .hourglass-stream {
+      stroke: var(--secondary);
+      stroke-width: 1.5;
+      opacity: 0.6;
+      animation: streamFlow 4s ease-in-out infinite;
+    }
+
+    @keyframes sandDrain {
+      0%   { transform: scaleY(1); opacity: 0.8; }
+      45%  { transform: scaleY(0.15); opacity: 0.5; }
+      55%  { transform: scaleY(1); opacity: 0.8; }
+      100% { transform: scaleY(0.15); opacity: 0.5; }
+    }
+
+    @keyframes sandFill {
+      0%   { transform: scaleY(0.2); opacity: 0.3; }
+      45%  { transform: scaleY(1); opacity: 0.8; }
+      55%  { transform: scaleY(0.2); opacity: 0.3; }
+      100% { transform: scaleY(1); opacity: 0.8; }
+    }
+
+    @keyframes streamFlow {
+      0%   { opacity: 0.6; }
+      45%  { opacity: 0.6; }
+      50%  { opacity: 0; }
+      55%  { opacity: 0.6; }
+      100% { opacity: 0.6; }
+    }
+
+    .reader-external-title {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--neutral);
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+
+    .reader-external-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    /* Buttons row */
+    .reader-buttons-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 28px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Big, visible CTA button */
+    .reader-external-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px 40px;
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-text);
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-decoration: none;
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, filter 0.2s;
+      box-shadow: 0 6px 24px rgba(42, 27, 17, 0.2);
+      letter-spacing: 0.02em;
+      animation: ctaPulse 2.5s ease-in-out infinite;
+    }
+
+    .reader-external-link:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 12px 36px rgba(42, 27, 17, 0.3);
+      filter: brightness(1.1);
+    }
+
+    .reader-external-link:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    @keyframes ctaPulse {
+      0%, 100% { box-shadow: 0 6px 24px rgba(42, 27, 17, 0.2); }
+      50% { box-shadow: 0 8px 32px rgba(42, 27, 17, 0.35); }
+    }
+
+    .reader-external-link-arrow {
+      font-size: 1.3rem;
+      transition: transform 0.3s;
+    }
+
+    .reader-external-link:hover .reader-external-link-arrow {
+      transform: translateX(4px);
+    }
+
+    /* Back button */
+    .reader-back-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px 28px;
+      background: transparent;
+      color: var(--text-main);
+      border: 1.5px solid var(--border-color);
+      border-radius: 14px;
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      cursor: pointer;
+      font-family: var(--font-family);
+      transition: all 0.25s ease;
+    }
+
+    .reader-back-btn:hover {
+      background: rgba(0,0,0,0.04);
+      border-color: var(--secondary);
+      color: var(--primary);
+    }
+
+    body.dark-theme .reader-back-btn:hover {
+      background: rgba(255,255,255,0.05);
+      color: var(--secondary);
+    }
+
+    .reader-timer-info {
+      margin-top: 20px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      opacity: 0.7;
+    }
+
+    .reader-timer-info .info-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4CAF50;
+      animation: timerPulse 1.5s ease-in-out infinite;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .reader-toolbar {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 10px 14px;
+      }
+
+      .reader-book-title {
+        max-width: 180px;
+        font-size: 0.95rem;
+      }
+
+      .reader-timer {
+        font-size: 1.5rem;
+      }
+
+      .reader-notice-card {
+        padding: 36px 28px;
+      }
+
+      .hourglass-container {
+        width: 60px;
+        height: 75px;
+      }
+
+      .reader-external-title {
+        font-size: 1.3rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .reader-left {
+        gap: 10px;
+      }
+
+      .reader-back span:not(.reader-back-arrow) {
+        display: none;
+      }
+
+      .reader-book-title {
+        max-width: 120px;
+        font-size: 0.85rem;
+      }
+
+      .reader-notice-card {
+        padding: 28px 20px;
+      }
+
+      .reader-external-link {
+        padding: 14px 28px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="reader-toolbar">
+    <div class="reader-left">
+      <button class="reader-back" onclick="goBack()" title="Вернуться в библиотеку">
+        <span class="reader-back-arrow">←</span>
+        <span>Библиотека</span>
+      </button>
+      <span class="reader-book-title" id="readerBookTitle">Загрузка…</span>
+    </div>
+  </div>
+
+  <div class="reader-frame-container">
+    <div class="reader-frame-overlay" id="loadingOverlay">
+      <div class="reader-loading-spinner"></div>
+      <div class="reader-loading-text">Открываем книгу…</div>
+    </div>
+
+    <div class="reader-external-notice" id="externalNotice">
+      <!-- Ambient background -->
+      <div class="reader-ambient-bg"></div>
+      <div class="reader-ambient-blob"></div>
+
+      <!-- Floating particles -->
+      <div class="reader-particles" id="particles"></div>
+
+      <!-- Main card -->
+      <div class="reader-notice-card">
+        <!-- Animated hourglass -->
+        <div class="hourglass-container">
+          <svg class="hourglass-svg" viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg">
+            <!-- Top frame bar -->
+            <rect class="hourglass-frame" x="10" y="2" width="40" height="5" rx="2.5"/>
+            <!-- Bottom frame bar -->
+            <rect class="hourglass-frame" x="10" y="73" width="40" height="5" rx="2.5"/>
+            <!-- Glass shape -->
+            <path class="hourglass-glass" d="M14 7 C14 7, 14 30, 30 38 C46 30, 46 7, 46 7"/>
+            <path class="hourglass-glass" d="M14 73 C14 73, 14 50, 30 42 C46 50, 46 73, 46 73"/>
+            <!-- Top sand -->
+            <path class="hourglass-sand-top" d="M18 12 C18 12, 18 28, 30 35 C42 28, 42 12, 42 12 Z"/>
+            <!-- Bottom sand -->
+            <path class="hourglass-sand-bottom" d="M20 70 C20 70, 20 55, 30 48 C40 55, 40 70, 40 70 Z"/>
+            <!-- Falling sand stream -->
+            <line class="hourglass-stream" x1="30" y1="36" x2="30" y2="46"/>
+          </svg>
+        </div>
+
+        <!-- Timer under hourglass -->
+        <div class="card-timer-block">
+          <div class="reader-timer" id="readerTimer">00:00:00</div>
+          <div class="reader-timer-status">
+            <span class="timer-dot" id="timerDot"></span>
+            <span id="timerStatusText">Таймер идёт</span>
+          </div>
+          <div class="reader-total-time" id="readerTotalTime">Всего: 0 мин</div>
+        </div>
+
+        <!-- Automation / Estimation Section -->
+        <div class="estimation-block">
+          <div class="estimation-row">
+            <span class="estimation-label">Скорость чтения:</span>
+          </div>
+          <div class="speed-control">
+            <div class="speed-slider-row">
+              <input type="range" id="speedSlider" class="speed-slider" min="30" max="900" step="15" value="90">
+              <div class="speed-input-wrap">
+                <input type="number" id="speedInput" class="speed-input" min="0.5" max="15" step="0.5" value="1.5">
+                <span class="speed-unit">мин/стр</span>
+              </div>
+            </div>
+            <div class="speed-hint">Перетащите ползунок или введите своё значение</div>
+          </div>
+          <div class="estimation-row" style="margin-top:4px;">
+            <span class="estimation-label">Прочитано за сессию:</span>
+            <span class="estimation-value" id="sessionPages">~ 0 стр.</span>
+          </div>
+        </div>
+
+        <div class="reader-external-title" id="externalTitle">Чтение книги</div>
+        <div class="reader-external-desc">
+          Книга открыта в новой вкладке. Таймер считает время, пока вы читаете.
+          <br>Когда закончите — вернитесь сюда, и время будет сохранено.
+        </div>
+        <div class="reader-buttons-row">
+          <a class="reader-external-link" id="externalLink" href="#" target="_blank">
+            <span>Перейти к чтению</span>
+            <span class="reader-external-link-arrow">→</span>
+          </a>
+          <button class="reader-back-btn" onclick="goBack()">
+            <span>←</span>
+            <span>Назад в библиотеку</span>
+          </button>
+        </div>
+        <div class="reader-timer-info">
+          <span class="info-dot"></span>
+          <span>Таймер активен, пока вкладка открыта</span>
+        </div>
+      </div>
+    </div>
+
+    <iframe class="reader-frame" id="readerFrame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/theme.js"></script>
+  <script>
+    // === Reading Timer Logic ===
+    const params = new URLSearchParams(window.location.search);
+    const bookId = params.get('id');
+    const bookUrl = params.get('url');
+
+    let sessionSeconds = 0;
+    let totalSessionSeconds = 0; // Accumulated time across pauses in this visit
+    let timerInterval = null;
+    let isTimerRunning = false;
+    let previousTotalSeconds = 0;
+    let initialReadPages = 0;
+    let totalBookPages = 0;
+
+    // Get current speed in seconds per page
+    const getSpeed = () => {
+      return parseInt(document.getElementById('speedSlider').value) || 90;
+    };
+
+    // Save speed preference to localStorage
+    const saveSpeedPref = (seconds) => {
+      localStorage.setItem('exlibris_reading_speed', seconds);
+    };
+
+    // Load speed preference from localStorage
+    const loadSpeedPref = () => {
+      const saved = localStorage.getItem('exlibris_reading_speed');
+      if (saved) {
+        const sec = parseInt(saved);
+        document.getElementById('speedSlider').value = sec;
+        document.getElementById('speedInput').value = (sec / 60).toFixed(1).replace(/\.0$/, '');
+      }
+    };
+
+    // Sync slider → input
+    const onSliderChange = () => {
+      const sec = parseInt(document.getElementById('speedSlider').value);
+      document.getElementById('speedInput').value = (sec / 60).toFixed(1).replace(/\.0$/, '');
+      saveSpeedPref(sec);
+      updateEstimation();
+    };
+
+    // Sync input → slider
+    const onInputChange = () => {
+      let val = parseFloat(document.getElementById('speedInput').value);
+      if (isNaN(val) || val < 0.5) val = 0.5;
+      if (val > 15) val = 15;
+      const sec = Math.round(val * 60);
+      document.getElementById('speedSlider').value = sec;
+      document.getElementById('speedInput').value = val;
+      saveSpeedPref(sec);
+      updateEstimation();
+    };
+
+    // Calculate estimated pages
+    const calculatePages = (seconds) => {
+      return Math.floor(seconds / getSpeed());
+    };
+
+    // Update estimation display
+    const updateEstimation = () => {
+      const p = calculatePages(totalSessionSeconds + sessionSeconds);
+      document.getElementById('sessionPages').textContent = `~ ${p} стр.`;
+    };
+
+    // Format seconds as HH:MM:SS
+    const formatTime = (totalSec) => {
+      const h = Math.floor(totalSec / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
+      const s = totalSec % 60;
+      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    };
+
+    // Format seconds into human-readable Russian string
+    const formatTimeHuman = (totalSec) => {
+      if (totalSec < 60) return `${totalSec} сек`;
+      const h = Math.floor(totalSec / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
+      if (h === 0) return `${m} мин`;
+      return `${h} ч ${m} мин`;
+    };
+
+    // Update the timer display
+    const updateTimerDisplay = () => {
+      document.getElementById('readerTimer').textContent = formatTime(sessionSeconds);
+      updateEstimation();
+    };
+
+    // Update total time display
+    const updateTotalDisplay = () => {
+      const total = previousTotalSeconds + sessionSeconds;
+      document.getElementById('readerTotalTime').textContent = `Всего: ${formatTimeHuman(total)}`;
+    };
+
+    // Save accumulated data to localStorage
+    const saveReadingTime = () => {
+      if (!bookId) return;
+      const books = getBooks();
+      const book = books.find(b => b.id === bookId);
+      if (book) {
+        // Save time
+        book.readingTime = (book.readingTime || 0) + sessionSeconds;
+        
+        // Auto-update pages
+        const newPagesRead = calculatePages(totalSessionSeconds + sessionSeconds);
+        // Only update if it actually adds pages and doesn't exceed total
+        const updatedPages = initialReadPages + newPagesRead;
+        book.readPages = Math.min(updatedPages, book.totalPages || 9999);
+        
+        // If we reached the end, mark as read
+        if (book.totalPages > 0 && book.readPages >= book.totalPages) {
+          book.read = true;
+        }
+
+        saveBooks(books);
+      }
+    };
+
+    // Start the timer
+    const startTimer = () => {
+      if (isTimerRunning) return;
+      isTimerRunning = true;
+      document.getElementById('timerDot').classList.remove('paused');
+      document.getElementById('timerStatusText').textContent = 'Таймер идёт';
+      timerInterval = setInterval(() => {
+        sessionSeconds++;
+        updateTimerDisplay();
+        updateTotalDisplay();
+        // Auto-save every 30 seconds
+        if (sessionSeconds % 30 === 0) saveReadingTime();
+      }, 1000);
+    };
+
+    // Pause the timer
+    const pauseTimer = () => {
+      if (!isTimerRunning) return;
+      isTimerRunning = false;
+      clearInterval(timerInterval);
+      timerInterval = null;
+      document.getElementById('timerDot').classList.add('paused');
+      document.getElementById('timerStatusText').textContent = 'На паузе';
+      
+      // Accumulate session time before resetting sessionSeconds
+      saveReadingTime();
+      totalSessionSeconds += sessionSeconds;
+      sessionSeconds = 0; 
+    };
+
+    // Handle visibility change — pause when tab hidden, resume when visible
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        pauseTimer();
+      } else {
+        // Reload previous total since we reset sessionSeconds on pause
+        const book = getBooks().find(b => b.id === bookId);
+        previousTotalSeconds = book?.readingTime || 0;
+        updateTotalDisplay();
+        startTimer();
+      }
+    });
+
+    // Save time before closing the tab
+    window.addEventListener('beforeunload', () => {
+      if (sessionSeconds > 0) {
+        saveReadingTime();
+      }
+    });
+
+    // Go back to library
+    const goBack = () => {
+      if (sessionSeconds > 0) {
+        saveReadingTime();
+      }
+      window.location.href = 'index.html';
+    };
+
+    // Generate floating particles
+    const generateParticles = () => {
+      const container = document.getElementById('particles');
+      if (!container) return;
+      for (let i = 0; i < 35; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.top = (40 + Math.random() * 60) + '%';
+        p.style.width = (3 + Math.random() * 7) + 'px';
+        p.style.height = p.style.width;
+        p.style.animationDuration = (4 + Math.random() * 8) + 's';
+        p.style.animationDelay = (Math.random() * 5) + 's';
+        container.appendChild(p);
+      }
+    };
+
+    // === Initialize ===
+    const init = () => {
+      if (!bookId) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      const books = getBooks();
+      const book = books.find(b => b.id === bookId);
+
+      if (!book) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // Set title
+      document.getElementById('readerBookTitle').textContent = book.title;
+      document.title = `${book.title} — Чтение | ExLibris`;
+
+      // Load previous reading time and pages
+      previousTotalSeconds = book.readingTime || 0;
+      initialReadPages = book.readPages || 0;
+      totalBookPages = book.totalPages || 0;
+      updateTotalDisplay();
+
+      const url = bookUrl || book.readLink;
+      if (!url) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // Show external notice
+      document.getElementById('loadingOverlay').classList.add('hidden');
+      document.getElementById('externalNotice').classList.add('visible');
+      document.getElementById('externalTitle').textContent = book.title;
+      document.getElementById('externalLink').href = url;
+
+      // Generate ambient particles
+      generateParticles();
+
+      // Load saved speed preference and wire up controls
+      loadSpeedPref();
+      document.getElementById('speedSlider').addEventListener('input', onSliderChange);
+      document.getElementById('speedInput').addEventListener('change', onInputChange);
+
+      // Auto-open the book in a new tab immediately
+      window.open(url, '_blank');
+
+      // Start the timer
+      startTimer();
+    };
+
+    init();
+  </script>
+</body>
+</html>

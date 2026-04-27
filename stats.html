@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Статистика | ExLibris</title>
+  <link rel="stylesheet" href="css/style.css?v=6">
+  <link rel="stylesheet" href="css/page-transition.css">
+  <link rel="stylesheet" href="css/ambient.css">
+  <style>
+    @keyframes iconFlip {
+      0%   { transform: rotate(0deg); }
+      45%  { transform: rotate(0deg); }
+      55%  { transform: rotate(180deg); }
+      100% { transform: rotate(180deg); }
+    }
+    .flipping-icon {
+      animation: iconFlip 4s ease-in-out infinite;
+      transform-origin: center center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Background -->
+  <div class="ambient-bg ambient-stats">
+    <div class="ambient-orb"></div>
+    <div class="ambient-orb"></div>
+    <div class="ambient-orb"></div>
+    <div class="ambient-bar"></div>
+    <div class="ambient-bar"></div>
+    <div class="ambient-bar"></div>
+    <div class="ambient-bar"></div>
+    <div class="ambient-bar"></div>
+    <div class="ambient-bar"></div>
+    <div class="ambient-bar"></div>
+    <div class="ambient-bar"></div>
+  </div>
+
+  <main class="container" style="padding-top: 60px; padding-bottom: 110px;">
+    <div class="stats-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"><img src="https://cdn-icons-png.flaticon.com/128/3062/3062278.png" alt="Автор"></div>
+          <div class="stat-value-text" id="statFavAuthor" style="font-size:1.5rem;min-height:auto;margin-bottom:5px;">-</div>
+          <div class="stat-label">Любимый автор</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><img src="https://cdn-icons-png.flaticon.com/512/57/57411.png" alt="Книга"></div>
+          <div class="stat-value-text" id="statFavBook" style="font-size:1.5rem;min-height:auto;margin-bottom:5px;">-</div>
+          <div class="stat-label">Любимая книга</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><img src="https://cdn-icons-png.flaticon.com/128/3330/3330300.png" alt="Книги"></div>
+          <div class="stat-value-text" id="statTotalBooks" style="font-size:2.5rem;margin-bottom:5px;">0</div>
+          <div class="stat-label">Всего книг</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><img src="https://cdn-icons-png.flaticon.com/128/9736/9736880.png" alt="Страницы"></div>
+          <div class="stat-value" id="statTotalPages" style="font-size:2.5rem;margin-bottom:5px;">0</div>
+          <div class="stat-label">Всего страниц</div>
+        </div>
+      </div>
+
+      <!-- Total Reading Time Card -->
+      <div class="stats-grid" style="grid-template-columns: 1fr; margin-top: 20px;">
+        <div class="stat-card" style="display: flex; align-items: center; gap: 24px; text-align: left; padding: 28px 36px;">
+          <div class="stat-icon" style="margin-bottom: 0;">
+            <img src="https://cdn-icons-png.flaticon.com/128/17192/17192768.png" alt="Время">
+          </div>
+          <div style="flex: 1;">
+            <div class="stat-label" style="margin-bottom: 6px;">Общее время чтения</div>
+            <div class="stat-value-text" id="statTotalReadTime" style="font-size:2rem;min-height:auto;margin-bottom:0;justify-content:flex-start;">0 мин</div>
+          </div>
+          <div style="text-align:right;color:var(--text-muted);font-size:0.88rem;line-height:1.6;" id="statReadTimeSummary"></div>
+        </div>
+      </div>
+
+      <div class="chart-container" style="display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:50px;margin-top:40px;padding:40px;background:var(--tertiary);border:1px solid var(--glass-border);border-radius:16px;">
+        <div class="pie-chart" id="readPieChart" style="position:relative;width:220px;height:220px;border-radius:50%;background:var(--border-color);display:flex;justify-content:center;align-items:center;">
+          <div style="width:170px;height:170px;background:var(--tertiary);border-radius:50%;display:flex;flex-direction:column;justify-content:center;align-items:center;color:var(--text-main);">
+            <div style="font-size:2.2rem;font-weight:bold;" id="chartPercentage">0</div>
+            <div style="font-size:0.95rem;color:var(--text-muted);margin-top:-5px;">стр. в ср.</div>
+          </div>
+        </div>
+        <div class="chart-legend" style="min-width:250px;">
+          <h3 style="margin-bottom:25px;font-size:1.5rem;color:var(--text-main);">Объем книг</h3>
+          <ul id="chartLegendList" style="list-style:none;padding:0;font-size:1.1rem;color:var(--text-main);"></ul>
+        </div>
+      </div>
+
+      <div class="stats-details-grid" style="margin-top:40px;">
+        <div class="stats-box">
+          <h3>Жанры</h3>
+          <ul id="genresList" class="stats-list"></ul>
+        </div>
+        <div class="stats-box">
+          <h3>Топ авторов</h3>
+          <ul id="authorsList" class="stats-list"></ul>
+        </div>
+      </div>
+
+      <!-- Top Books by Reading Time -->
+      <div class="stats-details-grid" style="margin-top:30px;grid-template-columns:1fr;" id="readingTimeSection">
+        <div class="stats-box">
+          <h3 style="display:flex;align-items:center;gap:10px;">
+            <img src="https://cdn-icons-png.flaticon.com/128/7873/7873698.png" alt="Часы" class="flipping-icon" style="width:28px;height:28px;object-fit:contain;filter:brightness(1.8);opacity:0.85;">
+            Топ книг по времени чтения
+          </h3>
+          <ul id="readingTimeList" class="stats-list"></ul>
+          <div id="readingTimeEmpty" style="display:none;text-align:center;padding:20px;color:var(--text-muted);font-style:italic;">
+            Пока нет данных о времени чтения
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-quote-bar">
+        <p class="footer-quote-text">Книга — это зеркало; если в неё смотрит обезьяна, то из неё не может смотреть апостол.</p>
+        <p class="footer-quote-author">— Георг Кристоф Лихтенберг</p>
+      </div>
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="footer-logo">ExLibris</a>
+          <p>Персональная библиотека для тех, кто живёт книгами.</p>
+        </div>
+        <div class="footer-nav-col">
+          <div class="footer-col-title">Навигация</div>
+          <div class="footer-links">
+            <a href="index.html">Главная</a>
+            <a href="form.html">Добавить книгу</a>
+            <a href="stats.html">Статистика</a>
+            <a href="about.html">О проекте</a>
+          </div>
+        </div>
+        <div class="footer-contacts-col">
+          <div class="footer-col-title">Контакты</div>
+          <div class="footer-contacts">
+            <a href="https://github.com/Twiser52" target="_blank"><span class="fc-icon"><img src="https://cdn-icons-png.flaticon.com/128/2111/2111425.png" alt="GitHub"></span>GitHub: @Twiser52</a>
+            <a href="mailto:stas06112008@gmail.com"><span class="fc-icon"><img src="https://cdn-icons-png.flaticon.com/128/542/542689.png" alt="Email"></span>stas06112008@gmail.com</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 ExLibris. Все права защищены.</span>
+        <span class="footer-bottom-badge"><img src="https://cdn-icons-png.flaticon.com/128/3330/3330300.png" alt="Books"> Сделано с любовью к книгам</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- FAB NAVIGATOR -->
+  <div class="fab-nav" id="fabNav">
+    <div class="fab-nav-items">
+      <button id="themeToggle" class="fab-theme-btn" data-label="Тема"><img src="https://cdn-icons-png.flaticon.com/128/2222/2222384.png" alt="Тема"></button>
+      <div class="fab-separator"></div>
+      <a href="about.html" class="fab-nav-link" data-label="О проекте"><img src="https://cdn-icons-png.flaticon.com/128/3330/3330300.png" alt="О проекте"></a>
+      <a href="stats.html" class="fab-nav-link active-page" data-label="Статистика"><img src="https://cdn-icons-png.flaticon.com/128/2881/2881263.png" alt="Статистика"></a>
+      <a href="form.html"  class="fab-nav-link" data-label="Добавить"><img src="https://cdn-icons-png.flaticon.com/128/992/992651.png" alt="Добавить"></a>
+      <a href="index.html" class="fab-nav-link" data-label="Главная"><img src="https://cdn-icons-png.flaticon.com/128/7133/7133312.png" alt="Главная"></a>
+    </div>
+    <button class="fab-trigger" aria-label="Навигация" aria-expanded="false"><img src="https://cdn-icons-png.flaticon.com/128/2702/2702134.png" alt="Меню"></button>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/stats.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/page-transition.js"></script>
+</body>
+</html>

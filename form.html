@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Добавить книгу | ExLibris</title>
+  <link rel="stylesheet" href="css/style.css?v=6">
+  <link rel="stylesheet" href="css/page-transition.css">
+  <link rel="stylesheet" href="css/ambient.css">
+</head>
+<body>
+
+  <!-- Ambient Background -->
+  <div class="ambient-bg ambient-form">
+    <div class="ambient-orb"></div>
+    <div class="ambient-orb"></div>
+    <div class="ambient-orb"></div>
+    <div class="ambient-streak"></div>
+    <div class="ambient-streak"></div>
+    <div class="ambient-streak"></div>
+  </div>
+
+  <main class="container form-container" style="margin-top: 60px; margin-bottom: 110px;">
+    <h1>Добавить новую книгу</h1>
+    <form id="addBookForm" class="form">
+      <div class="form-group">
+        <label for="title">Название книги</label>
+        <input type="text" id="title" placeholder="Введите название">
+      </div>
+      <div class="form-group">
+        <label for="author">Автор</label>
+        <input type="text" id="author" placeholder="Введите автора">
+      </div>
+      <div class="form-group">
+        <label for="genre">Жанр</label>
+        <input type="text" id="genre" placeholder="Введите жанр">
+      </div>
+      <div class="form-group">
+        <label for="image">URL Обложки</label>
+        <input type="url" id="image" placeholder="https://example.com/image.jpg">
+      </div>
+      <div class="form-group">
+        <label for="readLink">Ссылка для чтения (необязательно)</label>
+        <input type="url" id="readLink" placeholder="https://example.com/read">
+      </div>
+      <div class="form-group flex-group">
+        <div>
+          <label for="totalPages">Всего страниц</label>
+          <input type="number" id="totalPages" placeholder="350" min="0">
+        </div>
+        <div>
+          <label for="readPages">Прочитано</label>
+          <input type="number" id="readPages" placeholder="58" min="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="notes">Заметки / Отзыв о книге</label>
+        <textarea id="notes" rows="4" placeholder="Ваши мысли, любимые цитаты или отзыв..." style="width:100%;padding:14px 16px;border-radius:8px;border:1px solid var(--border-color);background:var(--tertiary);color:var(--neutral);font-family:inherit;resize:vertical;"></textarea>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="(window.navigateWithFlip||function(u){window.location.href=u})('index.html')">Отмена</button>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+      </div>
+    </form>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-quote-bar">
+        <p class="footer-quote-text">Книга — это зеркало; если в неё смотрит обезьяна, то из неё не может смотреть апостол.</p>
+        <p class="footer-quote-author">— Георг Кристоф Лихтенберг</p>
+      </div>
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="footer-logo">ExLibris</a>
+          <p>Персональная библиотека для тех, кто живёт книгами.</p>
+        </div>
+        <div class="footer-nav-col">
+          <div class="footer-col-title">Навигация</div>
+          <div class="footer-links">
+            <a href="index.html">Главная</a>
+            <a href="form.html">Добавить книгу</a>
+            <a href="stats.html">Статистика</a>
+            <a href="about.html">О проекте</a>
+          </div>
+        </div>
+        <div class="footer-contacts-col">
+          <div class="footer-col-title">Контакты</div>
+          <div class="footer-contacts">
+            <a href="https://github.com/Twiser52" target="_blank"><span class="fc-icon"><img src="https://cdn-icons-png.flaticon.com/128/2111/2111425.png" alt="GitHub"></span>GitHub: @Twiser52</a>
+            <a href="mailto:stas06112008@gmail.com"><span class="fc-icon"><img src="https://cdn-icons-png.flaticon.com/128/542/542689.png" alt="Email"></span>stas06112008@gmail.com</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 ExLibris. Все права защищены.</span>
+        <span class="footer-bottom-badge"><img src="https://cdn-icons-png.flaticon.com/128/3330/3330300.png" alt="Books"> Сделано с любовью к книгам</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- FAB NAVIGATOR -->
+  <div class="fab-nav" id="fabNav">
+    <div class="fab-nav-items">
+      <button id="themeToggle" class="fab-theme-btn" data-label="Тема"><img src="https://cdn-icons-png.flaticon.com/128/2222/2222384.png" alt="Тема"></button>
+      <div class="fab-separator"></div>
+      <a href="about.html" class="fab-nav-link" data-label="О проекте"><img src="https://cdn-icons-png.flaticon.com/128/3330/3330300.png" alt="О проекте"></a>
+      <a href="stats.html" class="fab-nav-link" data-label="Статистика"><img src="https://cdn-icons-png.flaticon.com/128/2881/2881263.png" alt="Статистика"></a>
+      <a href="form.html"  class="fab-nav-link active-page" data-label="Добавить"><img src="https://cdn-icons-png.flaticon.com/128/992/992651.png" alt="Добавить"></a>
+      <a href="index.html" class="fab-nav-link" data-label="Главная"><img src="https://cdn-icons-png.flaticon.com/128/7133/7133312.png" alt="Главная"></a>
+    </div>
+    <button class="fab-trigger" aria-label="Навигация" aria-expanded="false"><img src="https://cdn-icons-png.flaticon.com/128/2702/2702134.png" alt="Меню"></button>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/form.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/page-transition.js"></script>
+</body>
+</html>
